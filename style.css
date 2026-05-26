@@ -1,0 +1,863 @@
+/* ════════════════════════════════════════════
+   ChefMind — Style Sheet
+   Aesthetic: Warm editorial / food magazine
+════════════════════════════════════════════ */
+
+:root {
+  --cream:   #faf6f0;
+  --paper:   #f2ede5;
+  --brown:   #2b1d0e;
+  --amber:   #d4813a;
+  --amber-l: #e9a96a;
+  --green:   #3a6b4a;
+  --red:     #c0392b;
+  --text:    #2b1d0e;
+  --muted:   #8a7060;
+  --border:  #ddd4c5;
+  --shadow:  0 4px 24px rgba(43,29,14,.10);
+  --r:       16px;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--cream);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  min-height: 100vh;
+}
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--brown);
+  border-bottom: 2px solid var(--amber);
+}
+.header-inner {
+  max-width: 1100px; margin: 0 auto;
+  padding: 14px 24px;
+  display: flex; align-items: center; gap: 24px;
+}
+.logo { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.logo-icon { font-size: 24px; }
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 22px; color: var(--cream); letter-spacing: .5px;
+}
+.logo-text em { color: var(--amber-l); font-style: italic; }
+
+.nav { display: flex; gap: 4px; }
+.nav-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #c8b8a8;
+  padding: 6px 16px; border-radius: 30px;
+  font-family: var(--font-body); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all .2s;
+}
+.nav-btn:hover { color: var(--cream); border-color: #555; }
+.nav-btn.active {
+  background: var(--amber); color: var(--brown);
+  border-color: var(--amber);
+}
+
+.btn-profile {
+  background: transparent; border: 1.5px solid var(--amber);
+  color: var(--amber); padding: 6px 18px; border-radius: 30px;
+  font-family: var(--font-body); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all .2s;
+}
+.btn-profile:hover { background: var(--amber); color: var(--brown); }
+
+/* ── HERO ── */
+.hero {
+  max-width: 800px; margin: 0 auto;
+  padding: 60px 24px 40px;
+  position: relative; z-index: 1;
+}
+.hero-sub {
+  font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--amber); font-weight: 500; margin-bottom: 10px;
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.12; color: var(--brown);
+  margin-bottom: 40px;
+}
+.hero h1 em { color: var(--amber); font-style: italic; }
+
+/* ── INPUT CARD ── */
+.card {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  position: relative; z-index: 1;
+}
+
+.mood-label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--muted); text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 8px;
+}
+.mood-row { margin-bottom: 20px; }
+.mood-input, .ingredient-input {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-family: var(--font-body); font-size: 15px;
+  background: var(--cream); color: var(--text);
+  outline: none; transition: border-color .2s;
+}
+.mood-input:focus, .ingredient-input:focus { border-color: var(--amber); }
+
+/* ── TAGS ── */
+.tag-area {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  min-height: 20px; margin-bottom: 14px;
+}
+.tag {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--paper); border: 1px solid var(--border);
+  border-radius: 30px; padding: 5px 14px;
+  font-size: 14px; font-weight: 500; color: var(--brown);
+  animation: tagIn .2s ease;
+}
+@keyframes tagIn {
+  from { opacity: 0; transform: scale(.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.tag-remove {
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); font-size: 15px; line-height: 1;
+  padding: 0; transition: color .15s;
+}
+.tag-remove:hover { color: var(--red); }
+
+/* ── INGREDIENT ROW ── */
+.ingredient-row {
+  display: flex; gap: 10px; margin-bottom: 20px;
+}
+.ingredient-input { flex: 1; }
+.btn-add {
+  background: var(--brown); color: var(--cream);
+  border: none; border-radius: 10px;
+  padding: 12px 20px; font-size: 14px; font-weight: 500;
+  cursor: pointer; white-space: nowrap; transition: background .2s;
+}
+.btn-add:hover { background: var(--amber); }
+
+/* ── FILTERS ── */
+.filters-row {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 10px; margin-bottom: 24px;
+}
+.filter-label {
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.chip {
+  display: flex; align-items: center; gap: 6px;
+  border: 1.5px solid var(--border); border-radius: 30px;
+  padding: 6px 14px; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: var(--brown);
+  transition: all .2s;
+}
+.chip:has(input:checked) {
+  background: var(--brown); color: var(--cream);
+  border-color: var(--brown);
+}
+.chip input { display: none; }
+
+/* ── FIND BUTTON ── */
+.btn-find {
+  width: 100%;
+  background: linear-gradient(135deg, var(--amber) 0%, #c06820 100%);
+  color: #fff; border: none; border-radius: 12px;
+  padding: 16px; font-size: 16px; font-weight: 500;
+  cursor: pointer; font-family: var(--font-body);
+  position: relative; overflow: hidden; transition: transform .15s, box-shadow .15s;
+  box-shadow: 0 4px 16px rgba(212,129,58,.35);
+}
+.btn-find:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,129,58,.45); }
+.btn-find:active { transform: translateY(0); }
+.btn-find.loading .btn-find-inner::after {
+  content: ' ⏳';
+}
+
+/* ── RESULTS ── */
+.results-section, .tab-section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 48px 24px 80px;
+  position: relative; z-index: 1;
+}
+.results-title {
+  font-family: var(--font-display); font-size: 32px;
+  color: var(--brown); margin-bottom: 32px;
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* ── RECIPE CARD ── */
+.recipe-card {
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: var(--r); overflow: hidden;
+  box-shadow: var(--shadow); cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  animation: cardIn .35s ease both;
+}
+.recipe-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(43,29,14,.15); }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.recipe-card-img {
+  width: 100%; height: 180px;
+  object-fit: cover; display: block;
+  background: var(--paper);
+  font-size: 64px; text-align: center;
+  line-height: 180px;
+}
+
+.recipe-card-body { padding: 20px; }
+.recipe-card-title {
+  font-family: var(--font-display); font-size: 20px;
+  color: var(--brown); margin-bottom: 8px; line-height: 1.25;
+}
+.recipe-card-desc { color: var(--muted); font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
+.recipe-card-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid var(--border); padding-top: 14px;
+}
+.recipe-meta-item { font-size: 13px; color: var(--muted); }
+.recipe-meta-item strong { color: var(--brown); }
+
+.recipe-card-actions {
+  display: flex; gap: 8px; margin-top: 14px;
+}
+.btn-open {
+  flex: 1; background: var(--brown); color: var(--cream);
+  border: none; border-radius: 8px;
+  padding: 10px; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background .2s;
+}
+.btn-open:hover { background: var(--amber); }
+.btn-save {
+  background: transparent; border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 16px; cursor: pointer; transition: all .2s;
+}
+.btn-save:hover { border-color: var(--amber); background: var(--paper); }
+.btn-save.saved { background: var(--amber); border-color: var(--amber); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(43,29,14,.55);
+  backdrop-filter: blur(4px);
+  z-index: 200; display: flex;
+  align-items: center; justify-content: center;
+  padding: 24px;
+  animation: fadeIn .2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: #fff; border-radius: 20px;
+  max-width: 640px; width: 100%;
+  max-height: 85vh; overflow-y: auto;
+  padding: 36px; position: relative;
+  box-shadow: 0 24px 80px rgba(43,29,14,.3);
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  background: var(--paper); border: none; border-radius: 50%;
+  width: 34px; height: 34px; cursor: pointer;
+  font-size: 14px; color: var(--muted); transition: all .2s;
+}
+.modal-close:hover { background: var(--red); color: #fff; }
+
+/* modal content */
+.modal-emoji { font-size: 56px; margin-bottom: 16px; display: block; }
+.modal-title {
+  font-family: var(--font-display); font-size: 28px;
+  color: var(--brown); margin-bottom: 10px;
+}
+.modal-desc { color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+.modal-meta { display: flex; gap: 24px; margin-bottom: 24px; }
+.modal-meta-item { text-align: center; }
+.modal-meta-item .val {
+  font-family: var(--font-display); font-size: 24px;
+  color: var(--amber); display: block;
+}
+.modal-meta-item .lbl { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+.modal-section-title {
+  font-family: var(--font-display); font-size: 18px;
+  color: var(--brown); margin: 20px 0 12px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.ingredients-list, .steps-list { list-style: none; padding: 0; }
+.ingredients-list li {
+  padding: 8px 0; border-bottom: 1px dashed var(--border);
+  display: flex; align-items: center; gap: 8px; font-size: 15px;
+}
+.ingredients-list li::before { content: '◆'; font-size: 8px; color: var(--amber); }
+.steps-list li {
+  display: flex; gap: 14px; margin-bottom: 14px; font-size: 15px;
+  line-height: 1.55;
+}
+.step-num {
+  background: var(--amber); color: #fff; border-radius: 50%;
+  width: 26px; height: 26px; min-width: 26px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; margin-top: 2px;
+}
+
+/* ── LOGIN MODAL ── */
+.login-modal { max-width: 400px; text-align: center; }
+.login-modal h2 { font-family: var(--font-display); font-size: 28px; margin-bottom: 8px; }
+.login-sub { color: var(--muted); margin-bottom: 28px; }
+
+/* ── GENERATE TAB ── */
+.gen-wrap { max-width: 720px; margin: 0 auto; }
+.gen-sub { color: var(--muted); margin-bottom: 28px; font-size: 16px; }
+.gen-textarea {
+  width: 100%; height: 120px; resize: vertical;
+  border: 1.5px solid var(--border); border-radius: 12px;
+  padding: 16px; font-family: var(--font-body); font-size: 15px;
+  background: #fff; color: var(--text); outline: none;
+  transition: border-color .2s; margin-bottom: 16px;
+  display: block;
+}
+.gen-textarea:focus { border-color: var(--amber); }
+.gen-result {
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: var(--r); padding: 28px;
+  box-shadow: var(--shadow); margin-top: 28px;
+}
+
+/* ── SKELETON / LOADING ── */
+.skeleton-card {
+  background: #fff; border-radius: var(--r);
+  border: 1.5px solid var(--border);
+  overflow: hidden; box-shadow: var(--shadow);
+}
+.skel {
+  background: linear-gradient(90deg, var(--paper) 25%, #e8e0d5 50%, var(--paper) 75%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+.skel-img  { height: 180px; }
+.skel-body { padding: 20px; }
+.skel-line { height: 14px; border-radius: 4px; margin-bottom: 10px; }
+.skel-line.w60 { width: 60%; }
+.skel-line.w80 { width: 80%; }
+.skel-line.w40 { width: 40%; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  background: var(--brown); color: var(--cream);
+  padding: 12px 24px; border-radius: 30px;
+  font-size: 14px; font-weight: 500;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s, transform .3s;
+  z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+/* ── EMPTY MSG ── */
+.empty-msg {
+  color: var(--muted); font-size: 16px;
+  text-align: center; padding: 60px 0;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .header-inner { flex-wrap: wrap; gap: 10px; }
+  .nav { width: 100%; }
+  .nav-btn { flex: 1; text-align: center; padding: 8px 10px; }
+  .hero h1 { font-size: 30px; }
+  .ingredient-row { flex-direction: column; }
+  .btn-add { width: 100%; }
+}
+
+/* ════════════════════════════════════════════
+   v2.0 ADDITIONS — Auth, User Panel
+════════════════════════════════════════════ */
+
+/* ── PROFILE WRAP ── */
+.profile-wrap { position: relative; }
+
+.user-panel {
+  position: absolute; top: calc(100% + 10px); right: 0;
+  background: #fff; border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 16px 20px;
+  box-shadow: 0 8px 32px rgba(43,29,14,.18);
+  min-width: 200px; z-index: 300;
+  animation: slideUp .2s ease;
+}
+.user-panel-name {
+  font-weight: 500; color: var(--brown);
+  font-size: 14px; margin-bottom: 12px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.user-panel-btn {
+  width: 100%; background: transparent;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 8px 12px; font-size: 13px; font-weight: 500;
+  color: var(--brown); cursor: pointer; text-align: left;
+  transition: all .2s;
+}
+.user-panel-btn:hover { background: #fff0e8; border-color: var(--amber); }
+
+/* ── AUTH MODAL ── */
+.auth-modal { max-width: 440px; }
+
+.auth-tabs {
+  display: flex; gap: 0;
+  background: var(--paper); border-radius: 12px;
+  padding: 4px; margin-bottom: 24px;
+}
+.auth-tab {
+  flex: 1; background: transparent; border: none;
+  padding: 10px; border-radius: 9px;
+  font-family: var(--font-body); font-size: 14px; font-weight: 500;
+  color: var(--muted); cursor: pointer; transition: all .2s;
+}
+.auth-tab-active {
+  background: #fff; color: var(--brown);
+  box-shadow: 0 2px 8px rgba(43,29,14,.1);
+}
+
+.auth-sub { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+
+.auth-label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--muted); text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 6px; margin-top: 14px;
+}
+.auth-hint { font-size: 11px; text-transform: none; letter-spacing: 0; }
+
+.auth-input {
+  width: 100%; border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 11px 14px;
+  font-family: var(--font-body); font-size: 15px;
+  background: var(--cream); color: var(--text);
+  outline: none; transition: border-color .2s;
+}
+.auth-input:focus { border-color: var(--amber); }
+
+.input-pass-wrap { position: relative; }
+.input-pass-wrap .auth-input { padding-right: 44px; }
+.btn-eye {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  font-size: 16px; line-height: 1; color: var(--muted);
+}
+
+.auth-error {
+  display: none; color: var(--red);
+  font-size: 12px; margin-top: 4px;
+}
+
+.auth-switch {
+  text-align: center; font-size: 13px;
+  color: var(--muted); margin-top: 16px;
+}
+.auth-switch a { color: var(--amber); text-decoration: none; font-weight: 500; }
+.auth-switch a:hover { text-decoration: underline; }
+
+/* strength bar (optional) */
+.pass-strength { height: 3px; border-radius: 2px; margin-top: 5px; transition: all .3s; }
+
+/* ── API STATUS BADGE ── */
+.api-badge {
+  font-size: 12px; font-weight: 500;
+  padding: 5px 12px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.2);
+  white-space: nowrap;
+}
+.api-badge--on  { background: rgba(58,107,74,.7);  color: #a8f0ba; border-color: #3a6b4a; }
+.api-badge--off { background: rgba(180,140,60,.3); color: #f0d878; border-color: rgba(180,140,60,.5); }
+
+
+/* ════════════════════════════════════════════
+   ✨ ANIMATIONS v4.0 — ChefMind
+   Красивый фон · Ripple · Карточки · Reveal
+   БЕЗ кастомного курсора, без скрамбла
+════════════════════════════════════════════ */
+
+/* ══ КРАСИВЫЙ ФОНОВЫЙ ГРАДИЕНТ ══════════════
+   Живой mesh-градиент: тёплые тона кухни
+   анимируются медленно, как пар над едой    */
+body {
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%,  rgba(212,129,58,.13) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 85% 70%,  rgba(192,104,32,.10) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 50% at 50% 100%, rgba(58,107,74,.08)  0%, transparent 60%),
+    var(--cream);
+  animation: bgShift 14s ease-in-out infinite alternate;
+}
+@keyframes bgShift {
+  0%   { background-position: 0% 0%, 100% 100%, 50% 100%; }
+  33%  { background-position: 20% 10%, 80% 80%, 60% 90%; }
+  66%  { background-position: 5%  30%, 95% 60%, 40% 100%; }
+  100% { background-position: 15% 5%, 85% 90%, 55% 95%; }
+}
+
+/* Тёплое пятно под hero, дышит */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: -80px -40px;
+  background: radial-gradient(ellipse 70% 60% at 40% 50%,
+    rgba(212,129,58,.09) 0%, transparent 70%);
+  animation: heroGlow 8s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes heroGlow {
+  from { transform: scale(1)   rotate(-2deg); opacity: .7; }
+  to   { transform: scale(1.1) rotate(2deg);  opacity: 1; }
+}
+
+/* ══ ПОЛОСА ПРОГРЕССА ПРОКРУТКИ ═════════════ */
+#scroll-bar {
+  position: fixed; top: 0; left: 0; z-index: 9999;
+  height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--amber), #f0c07a, var(--amber));
+  background-size: 200% auto;
+  animation: scrollBarShimmer 2s linear infinite;
+  pointer-events: none;
+  border-radius: 0 2px 2px 0;
+  transition: width .12s linear;
+  box-shadow: 0 0 8px rgba(212,129,58,.6);
+}
+@keyframes scrollBarShimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
+/* ══ LOGO — лёгкое покачивание ══════════════ */
+.logo-icon {
+  display: inline-block;
+  animation: logoWiggle 4s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+@keyframes logoWiggle {
+  0%,100% { transform: rotate(0deg)   scale(1); }
+  15%     { transform: rotate(-10deg) scale(1.12); }
+  30%     { transform: rotate(8deg)   scale(1.08); }
+  45%     { transform: rotate(-4deg)  scale(1.04); }
+  60%     { transform: rotate(2deg)   scale(1.02); }
+}
+
+/* ══ NAV КНОПКИ — тонкая линия снизу ═══════ */
+.nav-btn { position: relative; }
+.nav-btn:not(.active)::after {
+  content: '';
+  position: absolute; bottom: 3px; left: 50%; right: 50%;
+  height: 2px;
+  background: var(--amber-l);
+  border-radius: 2px;
+  transition: left .28s cubic-bezier(.23,1,.32,1),
+              right .28s cubic-bezier(.23,1,.32,1);
+}
+.nav-btn:not(.active):hover::after { left: 14%; right: 14%; }
+
+/* ══ RIPPLE — волна при клике ═══════════════ */
+.btn-find, .btn-add, .btn-open, .nav-btn, .auth-tab,
+.btn-profile, .btn-save {
+  position: relative; overflow: hidden;
+}
+.ripple-wave {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,.28);
+  transform: scale(0);
+  animation: rippleAnim .6s cubic-bezier(0,.6,.4,1);
+  pointer-events: none;
+}
+@keyframes rippleAnim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ══ КНОПКА «Найти рецепты» — pulse glow ═══ */
+.btn-find {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1),
+              box-shadow .2s ease;
+}
+.btn-find:hover {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 10px 32px rgba(212,129,58,.45),
+              0  0   0  4px rgba(212,129,58,.15);
+}
+.btn-find:active { transform: translateY(0) scale(.98); }
+
+/* Пульсирующее кольцо вокруг кнопки пока не нажали */
+.btn-find::after {
+  content: '';
+  position: absolute; inset: -4px;
+  border-radius: 16px;
+  border: 2px solid rgba(212,129,58,.4);
+  opacity: 0;
+  animation: findPulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes findPulse {
+  0%,100% { opacity: 0;  transform: scale(1); }
+  50%     { opacity: .6; transform: scale(1.03); }
+}
+
+/* ══ BTN-ADD ════════════════════════════════ */
+.btn-add {
+  transition: background .2s,
+              transform .18s cubic-bezier(.34,1.56,.64,1),
+              box-shadow .2s;
+}
+.btn-add:hover {
+  transform: scale(1.07) translateY(-2px);
+  box-shadow: 0 6px 18px rgba(43,29,14,.22);
+}
+.btn-add:active { transform: scale(.95); }
+
+/* ══ ТЕГИ — bounce in ═══════════════════════ */
+.tag { animation: tagBounce .32s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes tagBounce {
+  from { opacity:0; transform: scale(.5) translateY(6px); }
+  to   { opacity:1; transform: scale(1)  translateY(0); }
+}
+.tag-remove {
+  transition: color .15s, transform .15s;
+}
+.tag-remove:hover {
+  color: var(--red);
+  transform: rotate(90deg) scale(1.2);
+}
+
+/* ══ CHIP-ФИЛЬТРЫ — pop ═════════════════════ */
+.chip { transition: all .2s; }
+.chip:has(input:checked) {
+  animation: chipPop .28s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes chipPop {
+  0%  { transform: scale(.88); }
+  60% { transform: scale(1.1); }
+  100%{ transform: scale(1); }
+}
+
+/* ══ КАРТОЧКИ РЕЦЕПТОВ — 3D tilt + shine ═══ */
+.recipe-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.recipe-card .card-shine {
+  position: absolute; inset: 0;
+  border-radius: var(--r);
+  background: radial-gradient(
+    circle at var(--mx,50%) var(--my,50%),
+    rgba(255,255,255,.22) 0%, transparent 55%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .25s;
+  z-index: 2;
+}
+.recipe-card:hover .card-shine { opacity: 1; }
+
+/* ══ SCROLL REVEAL — карточки всплывают ════ */
+.recipe-card[data-reveal] {
+  opacity: 0;
+  transform: translateY(36px) scale(.97);
+  transition: opacity .55s cubic-bezier(.23,1,.32,1),
+              transform .55s cubic-bezier(.23,1,.32,1);
+}
+.recipe-card[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Стаггер через custom property */
+.recipe-card:nth-child(2)[data-reveal] { transition-delay: .1s; }
+.recipe-card:nth-child(3)[data-reveal] { transition-delay: .2s; }
+
+/* ══ СОХРАНИТЬ — сердце прыгает ═════════════ */
+.btn-save {
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), background .2s;
+}
+.btn-save:hover  { transform: scale(1.28); }
+.btn-save.saved  { animation: heartPop .38s cubic-bezier(.34,1.56,.64,1); }
+@keyframes heartPop {
+  0%  { transform: scale(1);   }
+  45% { transform: scale(1.55);}
+  100%{ transform: scale(1);   }
+}
+
+/* ══ HERO ЗАГОЛОВОК — мягкое поднятие ══════ */
+.hero h1 {
+  animation: heroRise .8s .15s cubic-bezier(.23,1,.32,1) both;
+}
+@keyframes heroRise {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.hero-sub {
+  animation: heroRise .7s .05s cubic-bezier(.23,1,.32,1) both;
+}
+
+/* ══ INPUT — focus glow ═════════════════════ */
+.mood-input:focus, .ingredient-input:focus,
+.auth-input:focus, .gen-textarea:focus {
+  box-shadow: 0 0 0 3px rgba(212,129,58,.18),
+              0 2px 16px rgba(212,129,58,.1);
+}
+
+/* ══ SKELETON — плавная волна ═══════════════ */
+.skel {
+  background: linear-gradient(90deg,
+    #f0e8dc 0%, #e8ddd0 30%, #faf4ec 50%, #e8ddd0 70%, #f0e8dc 100%);
+  background-size: 350% 100%;
+  animation: skelWave 1.7s ease-in-out infinite;
+}
+@keyframes skelWave {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* ══ МОДАЛ — плавный вход ═══════════════════ */
+.modal-overlay { animation: overlayIn .22s ease both; }
+@keyframes overlayIn {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+.modal { animation: modalSlide .32s cubic-bezier(.23,1,.32,1) both; }
+@keyframes modalSlide {
+  from { opacity:0; transform: translateY(32px) scale(.96); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+
+/* ══ STEP NUMBERS — spin on hover ══════════ */
+.step-num {
+  transition: transform .32s cubic-bezier(.34,1.56,.64,1), background .2s;
+}
+.steps-list li:hover .step-num {
+  transform: rotate(360deg) scale(1.18);
+  background: var(--brown);
+}
+
+/* ══ ИНГРЕДИЕНТЫ — slide indent ════════════ */
+.ingredients-list li {
+  transition: background .18s, padding-left .2s;
+}
+.ingredients-list li:hover {
+  background: var(--paper);
+  padding-left: 10px;
+  border-radius: 6px;
+}
+
+/* ══ TOAST — bounce ═════════════════════════ */
+.toast {
+  transition: opacity .32s cubic-bezier(.34,1.56,.64,1),
+              transform .32s cubic-bezier(.34,1.56,.64,1);
+}
+.toast.show { transform: translateX(-50%) translateY(-10px) scale(1.04); }
+
+/* ══ PAGE LOAD ══════════════════════════════ */
+.header { animation: headerIn .5s cubic-bezier(.23,1,.32,1) both; }
+@keyframes headerIn {
+  from { opacity:0; transform: translateY(-16px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.card.input-card {
+  animation: cardFadeIn .7s .25s cubic-bezier(.23,1,.32,1) both;
+}
+@keyframes cardFadeIn {
+  from { opacity:0; transform: translateY(24px) scale(.98); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+
+/* ══ ГЕНЕРАТОР — результат ══════════════════ */
+.gen-result { animation: genReveal .45s cubic-bezier(.23,1,.32,1) both; }
+@keyframes genReveal {
+  from { opacity:0; transform: translateY(20px) scale(.98); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+
+/* ══ ПРОФИЛЬ BTN ════════════════════════════ */
+.btn-profile {
+  transition: all .22s cubic-bezier(.34,1.56,.64,1);
+}
+.btn-profile:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 0 3px rgba(212,129,58,.3);
+}
+
+/* ══ FLOATING ORBS — декоративный фон ══════
+   Три медленно движущихся пятна пара        */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  animation: orbFloat var(--dur,18s) ease-in-out infinite alternate;
+  opacity: .55;
+}
+.bg-orb-1 {
+  width: 520px; height: 420px;
+  background: radial-gradient(ellipse, rgba(212,129,58,.18) 0%, transparent 70%);
+  top: -100px; left: -120px;
+  --dur: 16s;
+}
+.bg-orb-2 {
+  width: 440px; height: 500px;
+  background: radial-gradient(ellipse, rgba(192,104,32,.14) 0%, transparent 70%);
+  bottom: 10%; right: -100px;
+  --dur: 22s;
+}
+.bg-orb-3 {
+  width: 360px; height: 360px;
+  background: radial-gradient(ellipse, rgba(58,107,74,.12) 0%, transparent 70%);
+  top: 40%; left: 30%;
+  --dur: 19s;
+}
+@keyframes orbFloat {
+  from { transform: translate(0,    0)    scale(1); }
+  to   { transform: translate(40px, 30px) scale(1.08); }
+}
+
+@keyframes findBtnLoading {
+  0%,100% { opacity: 1;    transform: translateY(0); }
+  50%     { opacity: .82;  transform: translateY(-2px); }
+}
