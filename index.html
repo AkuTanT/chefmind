@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChefMind — ИИ-помощник на кухне</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ───── HEADER ───── -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">🍳</span>
+      <span class="logo-text">Chef<em>Mind</em></span>
+    </div>
+    <span class="api-badge" id="apiStatusBadge">🟡 Режим офлайн</span>
+    <nav class="nav">
+      <button class="nav-btn active" data-tab="cook">Готовить</button>
+      <button class="nav-btn" data-tab="saved">Сохранённые</button>
+      <button class="nav-btn" data-tab="generate">Генератор</button>
+    </nav>
+    <div class="profile-wrap">
+      <button class="btn-profile" id="profileBtn">
+        <span id="profileLabel">Войти</span>
+      </button>
+      <!-- Dropdown panel for logged-in user -->
+      <div class="user-panel" id="userPanel" style="display:none">
+        <div class="user-panel-name" id="userGreeting"></div>
+        <button class="user-panel-btn" id="logoutBtn">🚪 Выйти</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ───── HERO / COOK TAB ───── -->
+<section class="hero" id="tabCook">
+  <div class="hero-text">
+    <p class="hero-sub">Что есть в холодильнике?</p>
+    <h1>Скажи&nbsp;— придумаю блюдо</h1>
+  </div>
+
+  <div class="card input-card">
+    <div class="mood-row">
+      <label class="mood-label">Настроение / пожелание:</label>
+      <input id="moodInput" class="mood-input" placeholder='например «острое и быстрое» или «уютный ужин»' />
+    </div>
+    <div class="tag-area" id="tagArea"></div>
+    <div class="ingredient-row">
+      <input id="ingredientInput" class="ingredient-input" placeholder="Добавить продукт..." />
+      <button class="btn-add" id="addBtn">+ Добавить</button>
+    </div>
+    <div class="filters-row">
+      <span class="filter-label">Фильтры:</span>
+      <label class="chip"><input type="checkbox" value="vegan" /> 🌱 Веган</label>
+      <label class="chip"><input type="checkbox" value="cheap" /> 💰 Дёшево</label>
+      <label class="chip"><input type="checkbox" value="fast"  /> ⚡ Быстро</label>
+      <label class="chip"><input type="checkbox" value="no-dairy" /> 🥛 Без молока</label>
+    </div>
+    <button class="btn-find" id="findBtn">
+      <span class="btn-find-inner">✨ Найти рецепты</span>
+    </button>
+  </div>
+</section>
+
+<!-- ───── RESULTS ───── -->
+<section class="results-section" id="resultsSection" style="display:none">
+  <h2 class="results-title">Рецепты для вас</h2>
+  <div class="recipe-grid" id="recipeGrid"></div>
+</section>
+
+<!-- ───── SAVED TAB ───── -->
+<section class="tab-section" id="tabSaved" style="display:none">
+  <h2 class="results-title">Сохранённые рецепты</h2>
+  <div class="recipe-grid" id="savedGrid"></div>
+  <p class="empty-msg" id="savedEmpty"></p>
+</section>
+
+<!-- ───── GENERATE TAB ───── -->
+<section class="tab-section" id="tabGenerate" style="display:none">
+  <div class="gen-wrap">
+    <h2 class="results-title">ИИ придумает блюдо с нуля</h2>
+    <p class="gen-sub">Опиши любую идею — и получишь оригинальный рецепт</p>
+    <textarea id="genPrompt" class="gen-textarea" placeholder="Например: «хочу что-то острое с нутом», «уютный суп по-азиатски»"></textarea>
+    <button class="btn-find" id="genBtn">🍽️ Создать рецепт</button>
+    <div id="genResult" class="gen-result" style="display:none"></div>
+  </div>
+</section>
+
+<!-- ───── MODAL: Recipe Detail ───── -->
+<div class="modal-overlay" id="modalOverlay" style="display:none">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ───── MODAL: Auth (Login / Register) ───── -->
+<div class="modal-overlay" id="authOverlay" style="display:none">
+  <div class="modal auth-modal">
+    <button class="modal-close" id="authClose">✕</button>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab auth-tab-active" id="tabLogin">Войти</button>
+      <button class="auth-tab" id="tabRegister">Регистрация</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <p class="auth-sub">Войдите в свой аккаунт</p>
+
+      <label class="auth-label">Логин</label>
+      <input id="loginUsername" class="auth-input" placeholder="your_login" autocomplete="username" />
+      <span class="auth-error" id="loginUsernameError"></span>
+
+      <label class="auth-label">Пароль</label>
+      <div class="input-pass-wrap">
+        <input id="loginPassword" class="auth-input" type="password" placeholder="••••••" autocomplete="current-password" />
+        <button class="btn-eye" data-target="loginPassword">👁</button>
+      </div>
+      <span class="auth-error" id="loginPasswordError"></span>
+
+      <button class="btn-find" id="loginSubmit" style="margin-top:20px">Войти в аккаунт</button>
+      <p class="auth-switch">Нет аккаунта? <a href="#" id="toRegister">Зарегистрироваться</a></p>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="registerForm" style="display:none">
+      <p class="auth-sub">Создайте аккаунт бесплатно</p>
+
+      <label class="auth-label">Ваше имя</label>
+      <input id="regName" class="auth-input" placeholder="Например: Алия" autocomplete="name" />
+      <span class="auth-error" id="regNameError"></span>
+
+      <label class="auth-label">Логин <span class="auth-hint">(только латиница, цифры, _)</span></label>
+      <input id="regUsername" class="auth-input" placeholder="your_login" autocomplete="username" />
+      <span class="auth-error" id="regUsernameError"></span>
+
+      <label class="auth-label">Пароль <span class="auth-hint">(минимум 6 символов)</span></label>
+      <div class="input-pass-wrap">
+        <input id="regPassword" class="auth-input" type="password" placeholder="••••••" autocomplete="new-password" />
+        <button class="btn-eye" data-target="regPassword">👁</button>
+      </div>
+      <span class="auth-error" id="regPasswordError"></span>
+
+      <label class="auth-label">Повторите пароль</label>
+      <div class="input-pass-wrap">
+        <input id="regConfirm" class="auth-input" type="password" placeholder="••••••" autocomplete="new-password" />
+        <button class="btn-eye" data-target="regConfirm">👁</button>
+      </div>
+      <span class="auth-error" id="regConfirmError"></span>
+
+      <button class="btn-find" id="registerSubmit" style="margin-top:20px">Создать аккаунт</button>
+      <p class="auth-switch">Уже есть аккаунт? <a href="#" id="toLogin">Войти</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ───── TOAST ───── -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+<script src="animations.js"></script>
+<script>
+  // Toggle password visibility
+  document.querySelectorAll('.btn-eye').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      input.type = input.type === 'password' ? 'text' : 'password';
+      btn.textContent = input.type === 'password' ? '👁' : '🙈';
+    });
+  });
+  // Cross-links between login/register
+  document.getElementById('toRegister').addEventListener('click', e => { e.preventDefault(); switchAuthTab('register'); });
+  document.getElementById('toLogin').addEventListener('click', e => { e.preventDefault(); switchAuthTab('login'); });
+</script>
+</body>
+</html>
