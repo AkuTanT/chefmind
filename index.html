@@ -1,85 +1,163 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ChefMind — ИИ-помощник на кухне</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-<!-- ───── HEADER ───── -->
+<!-- ONBOARDING OVERLAY -->
+<div class="onboarding-overlay" id="onboardingOverlay" style="display:none">
+  <div class="onboarding-box">
+    <div class="onboarding-steps">
+      <div class="onboarding-step active" id="ob1">
+        <div class="ob-emoji">🍳</div>
+        <h2>Добро пожаловать в ChefMind!</h2>
+        <p>ИИ-помощник, который придумает блюдо из того, что есть у вас дома.</p>
+      </div>
+      <div class="onboarding-step" id="ob2">
+        <div class="ob-emoji">📸</div>
+        <h2>Сфотографируйте холодильник</h2>
+        <p>AI сам распознает продукты и сразу предложит рецепты — даже без ввода текста.</p>
+      </div>
+      <div class="onboarding-step" id="ob3">
+        <div class="ob-emoji">🗣️</div>
+        <h2>Говорите — не пишите</h2>
+        <p>Нажмите на микрофон и назовите продукты вслух. Мы всё запишем за вас.</p>
+      </div>
+    </div>
+    <div class="ob-dots">
+      <span class="ob-dot active" data-s="0"></span>
+      <span class="ob-dot" data-s="1"></span>
+      <span class="ob-dot" data-s="2"></span>
+    </div>
+    <div class="ob-btns">
+      <button class="ob-skip" id="obSkip">Пропустить</button>
+      <button class="btn-find" id="obNext" style="width:auto;padding:12px 28px">Далее →</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
 <header class="header">
   <div class="header-inner">
     <div class="logo">
       <span class="logo-icon">🍳</span>
       <span class="logo-text">Chef<em>Mind</em></span>
     </div>
-    <span class="api-badge" id="apiStatusBadge">🟡 Режим офлайн</span>
+    <span class="api-badge" id="apiStatusBadge">🟡 Офлайн</span>
     <nav class="nav">
       <button class="nav-btn active" data-tab="cook">Готовить</button>
       <button class="nav-btn" data-tab="saved">Сохранённые</button>
       <button class="nav-btn" data-tab="generate">Генератор</button>
+      <button class="nav-btn" data-tab="plan">Меню недели</button>
+      <button class="nav-btn" data-tab="world">Кухни мира</button>
+      <button class="nav-btn" data-tab="chat">ИИ-шеф 💬</button>
     </nav>
-    <div class="profile-wrap">
-      <button class="btn-profile" id="profileBtn">
-        <span id="profileLabel">Войти</span>
-      </button>
-      <!-- Dropdown panel for logged-in user -->
-      <div class="user-panel" id="userPanel" style="display:none">
-        <div class="user-panel-name" id="userGreeting"></div>
-        <button class="user-panel-btn" id="logoutBtn">🚪 Выйти</button>
+    <div class="header-actions">
+      <button class="btn-notif" id="notifBtn" title="Уведомления">🔔</button>
+      <button class="btn-theme" id="themeBtn" title="Тема">🌙</button>
+      <div class="profile-wrap">
+        <button class="btn-profile" id="profileBtn"><span id="profileLabel">Войти</span></button>
+        <div class="user-panel" id="userPanel" style="display:none">
+          <div class="user-panel-name" id="userGreeting"></div>
+          <button class="user-panel-btn" id="statsBtn">📊 Моя статистика</button>
+          <button class="user-panel-btn" id="logoutBtn">🚪 Выйти</button>
+        </div>
       </div>
     </div>
   </div>
 </header>
 
-<!-- ───── HERO / COOK TAB ───── -->
+<!-- ROTD BANNER -->
+<div class="rotd-banner" id="rotdBanner" style="display:none">
+  <div class="rotd-inner">
+    <div class="rotd-badge">⭐ Блюдо дня</div>
+    <div class="rotd-info">
+      <span class="rotd-emoji" id="rotdEmoji"></span>
+      <div><div class="rotd-title" id="rotdTitle"></div><div class="rotd-meta" id="rotdMeta"></div></div>
+    </div>
+    <button class="rotd-btn" id="rotdBtn">Посмотреть →</button>
+    <button class="rotd-close" id="rotdClose">✕</button>
+  </div>
+</div>
+
+<!-- ACHIEVEMENT TOAST -->
+<div class="achievement-popup" id="achievementPopup" style="display:none">
+  <div class="ach-icon" id="achIcon"></div>
+  <div class="ach-text"><div class="ach-title" id="achTitle"></div><div class="ach-sub" id="achSub"></div></div>
+</div>
+
+<!-- TAB: COOK -->
 <section class="hero" id="tabCook">
   <div class="hero-text">
     <p class="hero-sub">Что есть в холодильнике?</p>
     <h1>Скажи&nbsp;— придумаю блюдо</h1>
   </div>
-
   <div class="card input-card">
+    <div class="history-row" id="historyRow" style="display:none">
+      <span class="history-label">🕐 Недавние:</span>
+      <div class="history-chips" id="historyChips"></div>
+      <button class="history-clear" id="historyClear">Очистить</button>
+    </div>
     <div class="mood-row">
       <label class="mood-label">Настроение / пожелание:</label>
-      <input id="moodInput" class="mood-input" placeholder='например «острое и быстрое» или «уютный ужин»' />
+      <input id="moodInput" class="mood-input" placeholder='например «острое и быстрое» или «уютный ужин»'/>
     </div>
     <div class="tag-area" id="tagArea"></div>
     <div class="ingredient-row">
-      <input id="ingredientInput" class="ingredient-input" placeholder="Добавить продукт..." />
+      <input id="ingredientInput" class="ingredient-input" placeholder="Добавить продукт..."/>
+      <button class="btn-mic" id="micBtn" title="Голосовой ввод">🎤</button>
+      <button class="btn-photo" id="photoBtn" title="Фото холодильника">📸</button>
       <button class="btn-add" id="addBtn">+ Добавить</button>
     </div>
+    <input type="file" id="photoInput" accept="image/*" style="display:none"/>
     <div class="filters-row">
       <span class="filter-label">Фильтры:</span>
-      <label class="chip"><input type="checkbox" value="vegan" /> 🌱 Веган</label>
-      <label class="chip"><input type="checkbox" value="cheap" /> 💰 Дёшево</label>
-      <label class="chip"><input type="checkbox" value="fast"  /> ⚡ Быстро</label>
-      <label class="chip"><input type="checkbox" value="no-dairy" /> 🥛 Без молока</label>
+      <label class="chip"><input type="checkbox" value="vegan"/> 🌱 Веган</label>
+      <label class="chip"><input type="checkbox" value="cheap"/> 💰 Дёшево</label>
+      <label class="chip"><input type="checkbox" value="fast"/> ⚡ Быстро</label>
+      <label class="chip"><input type="checkbox" value="no-dairy"/> 🥛 Без молока</label>
     </div>
-    <button class="btn-find" id="findBtn">
-      <span class="btn-find-inner">✨ Найти рецепты</span>
-    </button>
+    <div class="time-filter-row">
+      <span class="filter-label">⏱ Максимум времени:</span>
+      <div class="time-slider-wrap">
+        <input type="range" id="timeSlider" class="time-slider" min="5" max="120" value="120" step="5"/>
+        <span class="time-slider-val" id="timeSliderVal">Любое</span>
+      </div>
+    </div>
+    <button class="btn-find" id="findBtn"><span class="btn-find-inner">✨ Найти рецепты</span></button>
   </div>
 </section>
 
-<!-- ───── RESULTS ───── -->
+<!-- RESULTS -->
 <section class="results-section" id="resultsSection" style="display:none">
   <h2 class="results-title">Рецепты для вас</h2>
   <div class="recipe-grid" id="recipeGrid"></div>
 </section>
 
-<!-- ───── SAVED TAB ───── -->
+<!-- TAB: SAVED -->
 <section class="tab-section" id="tabSaved" style="display:none">
-  <h2 class="results-title">Сохранённые рецепты</h2>
+  <div class="saved-header">
+    <h2 class="results-title">Сохранённые рецепты</h2>
+    <div class="saved-controls">
+      <input id="savedSearch" class="mood-input" style="max-width:220px" placeholder="🔍 Поиск по названию..."/>
+      <select id="savedSort" class="sort-select">
+        <option value="date">По дате</option>
+        <option value="rating">По оценке</option>
+        <option value="time">По времени</option>
+      </select>
+    </div>
+  </div>
   <div class="recipe-grid" id="savedGrid"></div>
   <p class="empty-msg" id="savedEmpty"></p>
 </section>
 
-<!-- ───── GENERATE TAB ───── -->
+<!-- TAB: GENERATE -->
 <section class="tab-section" id="tabGenerate" style="display:none">
   <div class="gen-wrap">
     <h2 class="results-title">ИИ придумает блюдо с нуля</h2>
@@ -90,93 +168,164 @@
   </div>
 </section>
 
-<!-- ───── MODAL: Recipe Detail ───── -->
+<!-- TAB: MEAL PLAN -->
+<section class="tab-section" id="tabPlan" style="display:none">
+  <h2 class="results-title">📅 Меню на неделю</h2>
+  <p class="gen-sub">Перетащите рецепты из результатов или нажмите + чтобы добавить</p>
+  <div class="week-grid" id="weekGrid"></div>
+  <div class="plan-actions">
+    <button class="btn-find" id="planShopBtn" style="width:auto;margin-top:24px">🛒 Список покупок на неделю</button>
+    <button class="btn-outline" id="planClearBtn" style="margin-top:24px">🗑 Очистить меню</button>
+  </div>
+</section>
+
+<!-- TAB: WORLD CUISINES -->
+<section class="tab-section" id="tabWorld" style="display:none">
+  <h2 class="results-title">🌍 Кухни мира</h2>
+  <div class="world-grid" id="worldGrid"></div>
+  <div class="recipe-grid" id="worldRecipes" style="margin-top:32px"></div>
+</section>
+
+<!-- TAB: AI CHAT -->
+<section class="tab-section" id="tabChat" style="display:none">
+  <div class="chat-wrap">
+    <h2 class="results-title">💬 ИИ-шеф</h2>
+    <p class="gen-sub">Задайте любой вопрос о кулинарии</p>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg chat-msg--ai">
+        <span class="chat-avatar">👨‍🍳</span>
+        <div class="chat-bubble">Привет! Я ваш личный шеф-повар. Спросите меня что угодно — как заменить ингредиент, что подать на гарнир, как исправить пересоленное блюдо 😊</div>
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input id="chatInput" class="mood-input" placeholder="Например: «чем заменить сметану?»"/>
+      <button class="btn-find" id="chatSend" style="width:auto;padding:12px 20px">Отправить</button>
+    </div>
+    <div class="chat-suggestions">
+      <button class="chat-suggest">Чем заменить яйца?</button>
+      <button class="chat-suggest">Как убрать горечь?</button>
+      <button class="chat-suggest">Что подать к пасте?</button>
+      <button class="chat-suggest">Как спасти пересоленный суп?</button>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL: Recipe -->
 <div class="modal-overlay" id="modalOverlay" style="display:none">
-  <div class="modal" id="modal">
+  <div class="modal modal-recipe" id="modal">
     <button class="modal-close" id="modalClose">✕</button>
+    <button class="btn-cookmode" id="cookModeBtn">👨‍🍳 Режим готовки</button>
+    <button class="btn-print" id="printBtn" title="Печать">🖨️</button>
     <div id="modalContent"></div>
   </div>
 </div>
 
-<!-- ───── MODAL: Auth (Login / Register) ───── -->
+<!-- COOK MODE -->
+<div class="cookmode-overlay" id="cookmodeOverlay" style="display:none">
+  <div class="cookmode-inner">
+    <button class="cookmode-exit" id="cookmodeExit">✕ Выйти</button>
+    <div class="cookmode-recipe-title" id="cookmodeTitle"></div>
+    <div class="cookmode-progress"><span id="cookmodeStepNum">Шаг 1</span> <span id="cookmodeStepTotal"></span></div>
+    <div class="cookmode-step-text" id="cookmodeStepText"></div>
+    <div class="cookmode-timer-wrap" id="cookmodeTimerWrap" style="display:none">
+      <div class="cookmode-timer" id="cookmodeTimer">00:00</div>
+      <div class="cookmode-timer-btns">
+        <button class="cookmode-btn" id="cookmodeTimerStart">▶ Старт</button>
+        <button class="cookmode-btn" id="cookmodeTimerReset">↺ Сбросить</button>
+      </div>
+    </div>
+    <div class="cookmode-nav">
+      <button class="cookmode-btn cookmode-prev" id="cookmodePrev">← Назад</button>
+      <button class="cookmode-btn cookmode-next" id="cookmodeNext">Далее →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Shopping List -->
+<div class="modal-overlay" id="shopOverlay" style="display:none">
+  <div class="modal shop-modal">
+    <button class="modal-close" id="shopClose">✕</button>
+    <h2 class="modal-title" style="margin-bottom:16px">🛒 Список покупок</h2>
+    <p class="shop-sub">Отметьте что уже есть дома</p>
+    <div id="shopList"></div>
+    <button class="btn-find" id="shopCopyBtn" style="margin-top:16px">📋 Скопировать список</button>
+  </div>
+</div>
+
+<!-- MODAL: Stats -->
+<div class="modal-overlay" id="statsOverlay" style="display:none">
+  <div class="modal stats-modal">
+    <button class="modal-close" id="statsClose">✕</button>
+    <h2 class="modal-title" style="margin-bottom:20px">📊 Моя статистика</h2>
+    <div id="statsContent"></div>
+  </div>
+</div>
+
+<!-- MODAL: Auth -->
 <div class="modal-overlay" id="authOverlay" style="display:none">
   <div class="modal auth-modal">
     <button class="modal-close" id="authClose">✕</button>
-
-    <!-- Tabs -->
     <div class="auth-tabs">
       <button class="auth-tab auth-tab-active" id="tabLogin">Войти</button>
       <button class="auth-tab" id="tabRegister">Регистрация</button>
     </div>
-
-    <!-- LOGIN FORM -->
     <div id="loginForm">
       <p class="auth-sub">Войдите в свой аккаунт</p>
-
       <label class="auth-label">Логин</label>
-      <input id="loginUsername" class="auth-input" placeholder="your_login" autocomplete="username" />
+      <input id="loginUsername" class="auth-input" placeholder="your_login" autocomplete="username"/>
       <span class="auth-error" id="loginUsernameError"></span>
-
       <label class="auth-label">Пароль</label>
       <div class="input-pass-wrap">
-        <input id="loginPassword" class="auth-input" type="password" placeholder="••••••" autocomplete="current-password" />
+        <input id="loginPassword" class="auth-input" type="password" placeholder="••••••" autocomplete="current-password"/>
         <button class="btn-eye" data-target="loginPassword">👁</button>
       </div>
       <span class="auth-error" id="loginPasswordError"></span>
-
       <button class="btn-find" id="loginSubmit" style="margin-top:20px">Войти в аккаунт</button>
       <p class="auth-switch">Нет аккаунта? <a href="#" id="toRegister">Зарегистрироваться</a></p>
     </div>
-
-    <!-- REGISTER FORM -->
     <div id="registerForm" style="display:none">
       <p class="auth-sub">Создайте аккаунт бесплатно</p>
-
       <label class="auth-label">Ваше имя</label>
-      <input id="regName" class="auth-input" placeholder="Например: Алия" autocomplete="name" />
+      <input id="regName" class="auth-input" placeholder="Например: Алия" autocomplete="name"/>
       <span class="auth-error" id="regNameError"></span>
-
-      <label class="auth-label">Логин <span class="auth-hint">(только латиница, цифры, _)</span></label>
-      <input id="regUsername" class="auth-input" placeholder="your_login" autocomplete="username" />
+      <label class="auth-label">Логин <span class="auth-hint">(латиница, цифры, _)</span></label>
+      <input id="regUsername" class="auth-input" placeholder="your_login" autocomplete="username"/>
       <span class="auth-error" id="regUsernameError"></span>
-
-      <label class="auth-label">Пароль <span class="auth-hint">(минимум 6 символов)</span></label>
+      <label class="auth-label">Пароль <span class="auth-hint">(мин. 6 символов)</span></label>
       <div class="input-pass-wrap">
-        <input id="regPassword" class="auth-input" type="password" placeholder="••••••" autocomplete="new-password" />
+        <input id="regPassword" class="auth-input" type="password" placeholder="••••••" autocomplete="new-password"/>
         <button class="btn-eye" data-target="regPassword">👁</button>
       </div>
       <span class="auth-error" id="regPasswordError"></span>
-
       <label class="auth-label">Повторите пароль</label>
       <div class="input-pass-wrap">
-        <input id="regConfirm" class="auth-input" type="password" placeholder="••••••" autocomplete="new-password" />
+        <input id="regConfirm" class="auth-input" type="password" placeholder="••••••" autocomplete="new-password"/>
         <button class="btn-eye" data-target="regConfirm">👁</button>
       </div>
       <span class="auth-error" id="regConfirmError"></span>
-
       <button class="btn-find" id="registerSubmit" style="margin-top:20px">Создать аккаунт</button>
       <p class="auth-switch">Уже есть аккаунт? <a href="#" id="toLogin">Войти</a></p>
     </div>
   </div>
 </div>
 
-<!-- ───── TOAST ───── -->
+<!-- PRINT AREA -->
+<div id="printArea" style="display:none"></div>
+
 <div class="toast" id="toast"></div>
 
 <script src="app.js"></script>
 <script src="animations.js"></script>
 <script>
-  // Toggle password visibility
-  document.querySelectorAll('.btn-eye').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const input = document.getElementById(btn.dataset.target);
-      input.type = input.type === 'password' ? 'text' : 'password';
-      btn.textContent = input.type === 'password' ? '👁' : '🙈';
+  document.querySelectorAll('.btn-eye').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const inp=document.getElementById(btn.dataset.target);
+      inp.type=inp.type==='password'?'text':'password';
+      btn.textContent=inp.type==='password'?'👁':'🙈';
     });
   });
-  // Cross-links between login/register
-  document.getElementById('toRegister').addEventListener('click', e => { e.preventDefault(); switchAuthTab('register'); });
-  document.getElementById('toLogin').addEventListener('click', e => { e.preventDefault(); switchAuthTab('login'); });
+  document.getElementById('toRegister').addEventListener('click',e=>{e.preventDefault();switchAuthTab('register');});
+  document.getElementById('toLogin').addEventListener('click',e=>{e.preventDefault();switchAuthTab('login');});
 </script>
 </body>
 </html>
